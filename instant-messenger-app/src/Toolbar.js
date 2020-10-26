@@ -5,6 +5,7 @@ import { IconButton, Avatar } from '@material-ui/core';
 import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { SearchOutlined } from "@material-ui/icons";
+import ToolbarChat from './ToolbarChat';
 
 function Toolbar() {
     return (
@@ -29,6 +30,11 @@ function Toolbar() {
                         <SearchOutlined/>
                         <input placeholder="Find a message" type="text"/>
                     </div>
+            </div>
+
+            <div className="toolbar-chats">
+                <ToolbarChat/>                
+                <ToolbarChat/>
             </div>
         </div>
     )
