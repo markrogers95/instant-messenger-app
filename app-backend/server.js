@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Messages = require('./dbmessages.js');
 const Pusher = require("pusher");
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 9001;
@@ -15,6 +16,10 @@ const pusher = new Pusher({
   });
 
 app.use(express.json());
+app.use(cors());
+// app.use((req, res, next) => {
+
+// });
 
 mongoose.connect('mongodb://127.0.0.1:27017/instant-messenger', {
     useNewUrlParser: true,
@@ -31,6 +36,22 @@ db.once('open', () => {
     const changeStream = msgCollection.watch();
 
     changeStream.on("change", (change) => {
+        console.log("A change occured!", change);
+
+        if (change.operationType === 'insert'){
+            const messageDetails = change.fullDocument;
+
+            pusher.trigger('messages', 'inserted',
+                {
+                    name: messageDetails.name,
+                    message: messageDetails.message,
+                    timestamp: messageDetails.timestamp,
+                    received: messageDetails.received
+                }
+            );
+        } else {
+            console.log("Pusher trigger error!");
+        }
     });
 });
 
